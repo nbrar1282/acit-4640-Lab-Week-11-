@@ -1,0 +1,13 @@
+- name: Setup Redis and Frontend Servers
+  hosts:
+    - server_role_redis_server
+    - server_role_frontend_server
+  become: true
+  gather_facts: yes
+
+  vars:
+    ansible_user: "{{ 'rocky' if 'server_role_redis_server' in group_names else 'ubuntu' }}"
+
+  roles:
+    - { role: redis_server, when: "'server_role_redis_server' in group_names" }
+    - { role: frontend_servers, when: "'server_role_frontend_server' in group_names" }

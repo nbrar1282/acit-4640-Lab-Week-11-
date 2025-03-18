@@ -1,0 +1,24 @@
+- name: Install Nginx on Ubuntu
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Create index.html
+  ansible.builtin.template:
+    src: templates/index.html.j2
+    dest: /var/www/html/index.html
+  notify: Restart nginx
+
+- name: Copy Nginx configuration
+  ansible.builtin.copy:
+    src: files/default.conf
+    dest: /etc/nginx/sites-available/default
+  notify: Restart nginx
+
+- name: Enable Nginx site
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/default
+    dest: /etc/nginx/sites-enabled/default
+    state: link
+  notify: Restart nginx
